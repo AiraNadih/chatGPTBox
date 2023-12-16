@@ -20,7 +20,11 @@ const createGenPrompt =
     includeLanguagePrefix = false,
   }) =>
   async (selection) => {
-    const preferredLanguage = isTranslation ? targetLanguage : await getPreferredLanguage()
+    let preferredLanguage = targetLanguage
+
+    if (isTranslation && !targetLanguage) {
+      preferredLanguage = await getPreferredLanguage()
+
     let fullMessage = isTranslation
       ? `Translate the following into ${preferredLanguage} and only show me the translated content`
       : message
@@ -45,7 +49,6 @@ export const config = {
     label: 'Translate',
     genPrompt: createGenPrompt({
       isTranslation: true,
-      targetLanguage: await getPreferredLanguage(),
     }),
   },
   translateToEn: {
@@ -69,7 +72,6 @@ export const config = {
     label: 'Translate (Bidirectional)',
     genPrompt: createGenPrompt({
       isTranslation: true,
-      targetLanguage: await getPreferredLanguage(),
       enableBidirectional: true,
     }),
   },
